@@ -3,7 +3,7 @@ import { motion } from 'motion/react'
 import mapboxgl from 'mapbox-gl'
 import { fmtDistance } from './api.js'
 import { track, turn } from './walk.js'
-import { avatarLayer } from './avatar.js'
+import { avatarLayer, loadAvatar } from './avatar.js'
 
 const WALK = 1.63 // m/s the walk clip covers at real size (printed by scripts/retarget.mjs)
 const SIZE = 3 // × real size, so the character reads from the chase cam
@@ -19,6 +19,11 @@ const clamp = (v, lo = -1, hi = 1) => Math.max(lo, Math.min(hi, v))
 const KEYS = { ArrowUp: 1, KeyW: 1, ArrowDown: -1, KeyS: -1 }
 const LOOK_KEYS = { ArrowLeft: -1, KeyA: -1, ArrowRight: 1, KeyD: 1 }
 const SPRINT_KEYS = ['ShiftLeft', 'ShiftRight']
+const MODEL = import.meta.env.BASE_URL + 'avatar.glb'
+const CLIPS = [import.meta.env.BASE_URL + 'walk.json']
+
+// App calls this when the page goes idle, so the character is ready before anyone hits play.
+export const preload = () => loadAvatar(MODEL, CLIPS)
 
 // Walk a character along the walking route to `place`, with W/S, arrows or an on-screen joystick.
 export default function Game({ map, place, route, cat, onExit }) {
@@ -40,7 +45,7 @@ export default function Game({ map, place, route, cat, onExit }) {
     let s = 0
     let pos = path.at(0)
     let dir = path.heading(0, AIM)
-    const avatar = avatarLayer(import.meta.env.BASE_URL + 'avatar.glb', [import.meta.env.BASE_URL + 'walk.json'])
+    const avatar = avatarLayer(MODEL, CLIPS)
     const place3d = () => {
       const merc = mapboxgl.MercatorCoordinate.fromLngLat(pos)
       avatar.setPose(merc, merc.meterInMercatorCoordinateUnits() * SIZE, dir)

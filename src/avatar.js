@@ -13,15 +13,22 @@ export function modelMatrix({ x, y, z }, scale, heading) {
     .multiply(new THREE.Matrix4().makeRotationY(Math.PI - (heading * Math.PI) / 180))
 }
 
-// Parse once; replaying the game reuses it. Extra clips are AnimationClip JSON (see scripts/retarget.mjs).
+// Parse once (preloaded at startup, reused by every game). Extra clips are AnimationClip JSON (see scripts/retarget.mjs).
 let loading
 // parse() does `new this(...)`, so it must be called on AnimationClip, not passed bare to .then().
 export const loadClip = url => fetch(url).then(r => r.json()).then(j => THREE.AnimationClip.parse(j))
 // A missing clip only costs that animation, never the character.
 const optional = p => p.catch(e => (console.warn('avatar clip failed', e), null))
-const load = (url, extra) =>
-  // avatar.glb is meshopt-compressed (see README), so the loader needs the decoder.
-  (loading ??= Promise.all([new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync(url), ...extra.map(u => optional(loadClip(u)))]))
+// avatar.glb is meshopt-compressed (see README), so the loader needs the decoder.
+// A failed load isn't cached, so a background preload that hits a network blip gets retried when you press play.
+export const loadAvatar = (url, extra) =>
+  (loading ??= Promise.all([
+    new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync(url),
+    ...extra.map(u => optional(loadClip(u))),
+  ]).catch(e => {
+    loading = null
+    throw e
+  }))
 
 export function avatarLayer(url, extraClips = []) {
   const scene = new THREE.Scene()
@@ -52,7 +59,7 @@ export function avatarLayer(url, extraClips = []) {
     current.timeScale = timeScale
   }
 
-  load(url, extraClips).then(([gltf, ...extra]) => {
+  loadAvatar(url, extraClips).then(([gltf, ...extra]) => {
     scene.add(gltf.scene)
     mixer = new THREE.AnimationMixer(gltf.scene)
     clips = [...gltf.animations, ...extra.filter(Boolean)]

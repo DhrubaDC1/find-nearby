@@ -175,7 +175,7 @@ Geolocation needs HTTPS. Run `ngrok http 5173` and open the `*.ngrok-free.app` U
 
 ## 🧠 How it works
 
-Everything comes from Mapbox. There's no backend, no database and no state library: **5 runtime dependencies** in total. three.js is only downloaded when you start game mode, where it draws the animated character inside the Mapbox scene (a custom layer, so buildings still hide it).
+Everything comes from Mapbox. There's no backend, no database and no state library: **5 runtime dependencies** in total. three.js draws the animated character inside the Mapbox scene (a custom layer, so buildings still hide it); it's kept out of the first page load and fetched in the background, with the avatar, once the page is idle, so game mode starts instantly.
 
 ```mermaid
 flowchart LR
