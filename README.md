@@ -12,6 +12,7 @@
 [![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white&labelColor=1a1a2e)](https://vite.dev)
 [![Mapbox](https://img.shields.io/badge/Mapbox_GL-3-4264FB?style=for-the-badge&logo=mapbox&logoColor=white&labelColor=0b1026)](https://docs.mapbox.com/mapbox-gl-js/)
 [![Motion](https://img.shields.io/badge/Motion-14-FF4D8D?style=for-the-badge&logo=framer&logoColor=white&labelColor=2a0f1f)](https://motion.dev)
+[![three.js](https://img.shields.io/badge/three.js-r186-ffffff?style=for-the-badge&logo=threedotjs&logoColor=white&labelColor=111111)](https://threejs.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge&labelColor=0f1f14)](LICENSE)
 
 [![Stars](https://img.shields.io/github/stars/DhrubaDC1/find-nearby?style=social)](https://github.com/DhrubaDC1/find-nearby/stargazers)
@@ -43,7 +44,7 @@ You start on a slowly spinning 3D globe. Share your location and the camera **fl
 <td width="50%" valign="top">
 
 ### 🌗 A map that follows the sun
-Dawn, day, dusk and night lighting are picked **from your local clock**, and the whole interface changes color with it. It also changes what opens first: ☕ coffee at dawn, 🍸 bars at night.
+Dawn, day, dusk and night lighting are picked **from your local clock**, and the whole interface changes color with it.
 
 </td>
 </tr>
@@ -72,6 +73,20 @@ Can't decide? One button picks a random place nearby, flies you there and opens 
 
 ### 📱 Made for your phone
 On a phone the panels become **bottom sheets**, the camera keeps the map visible above them, and it respects `prefers-reduced-motion`. It's keyboard friendly too (<kbd>Esc</kbd> closes a place).
+
+</td>
+</tr>
+<tr>
+<td valign="top">
+
+### 🎮 Walk it yourself
+Hit **Walk there yourself** and the camera drops behind a **3D animated character** standing on the route, GTA-style. Walk the route with <kbd>W</kbd>/<kbd>S</kbd> or the arrow keys (hold <kbd>Shift</kbd> to sprint; a **touch joystick** on phones) and **drag or use <kbd>A</kbd>/<kbd>D</kbd> to look around** the 3D streets; it turns the corners for you, counts down the meters, and cheers when you arrive.
+
+</td>
+<td valign="top">
+
+### ❤️ Save & share
+Tap ♡ to keep a place in your **Saved** list (stored on your device). **Share** sends a link that opens the same spot, category and place.
 
 </td>
 </tr>
@@ -160,7 +175,7 @@ Geolocation needs HTTPS. Run `ngrok http 5173` and open the `*.ngrok-free.app` U
 
 ## 🧠 How it works
 
-Everything comes from Mapbox. There's no backend, no database and no state library: **4 runtime dependencies** in total.
+Everything comes from Mapbox. There's no backend, no database and no state library: **5 runtime dependencies** in total. three.js is only downloaded when you start game mode, where it draws the animated character inside the Mapbox scene (a custom layer, so buildings still hide it).
 
 ```mermaid
 flowchart LR
@@ -191,12 +206,30 @@ src/
 ├── MapView.jsx      mapbox-gl: globe, fly-in, pins, rings, route
 ├── PlaceList.jsx    category chips + animated card list
 ├── PlaceDetail.jsx  place panel: route ETA, hours, links
+├── Game.jsx         game mode: chase cam, controls, joystick, HUD
 ├── api.js           every Mapbox call + small formatters
 ├── light.js         clock → dawn / day / dusk / night
+├── share.js         view ⇄ URL for shareable links
+├── walk.js          route-following movement (position + heading along the route)
+├── avatar.js        three.js custom layer: animated glTF character
 └── styles.css       glass UI, themed per light preset
+public/
+├── avatar.glb       the character (rigged glTF with idle clips; WebP + meshopt, 5 MB)
+└── walk.json        walk cycle retargeted onto it
+scripts/
+└── retarget.mjs     rebuilds walk.json from a Mixamo animation (.fbx or .glb)
 ```
 
-The whole app is about 600 lines of JavaScript, small enough to read in one sitting.
+The whole app is about 900 lines of JavaScript, small enough to read in one sitting.
+
+To swap in another avatar, compress it the same way (textures ≤ 1024 px as WebP, geometry meshopt-compressed, nothing simplified):
+
+```bash
+npx @gltf-transform/cli dedup avatar.glb a.glb
+npx @gltf-transform/cli resize a.glb b.glb --width 1024 --height 1024
+npx @gltf-transform/cli webp b.glb c.glb --quality 90
+npx @gltf-transform/cli meshopt c.glb public/avatar.glb --level medium
+```
 
 </details>
 
@@ -208,9 +241,10 @@ The whole app is about 600 lines of JavaScript, small enough to read in one sitt
 - [x] Walking routes with live ETA
 - [x] Opening hours, ratings, phone, website
 - [x] Mobile bottom sheets
-- [ ] ❤️ Save favorites
+- [x] ❤️ Save favorites
 - [ ] 🔎 Search-as-you-type for any place
-- [ ] 🔗 Shareable links to a place
+- [x] 🔗 Shareable links to a place
+- [x] 🎮 Game mode: walk the route yourself in a third-person chase cam (W/S or arrows, Shift to sprint, touch joystick, drag to look around)
 - [ ] 🌐 Multi-language UI
 - [ ] ☀️ Sun-position lighting (real sunrise/sunset instead of fixed hours)
 
@@ -228,7 +262,7 @@ PRs are welcome! Keep it simple: no new dependency when a few lines will do.
 
 [MIT](LICENSE) © Dhruba Chakraborty
 
-Map data © [Mapbox](https://www.mapbox.com/about/maps/) © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors.
+Map data © [Mapbox](https://www.mapbox.com/about/maps/) © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors. Walk animation: Mixamo's "Walking" from [Mixamo](https://www.mixamo.com).
 
 <br />
 
