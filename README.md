@@ -8,6 +8,10 @@
 
 <br />
 
+<a href="https://find-nearby.vercel.app"><img src="docs/live-demo.svg" alt="Try it live at find-nearby.vercel.app" width="330" /></a>
+
+<br />
+
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white&labelColor=20232a)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white&labelColor=1a1a2e)](https://vite.dev)
 [![Mapbox](https://img.shields.io/badge/Mapbox_GL-3-4264FB?style=for-the-badge&logo=mapbox&logoColor=white&labelColor=0b1026)](https://docs.mapbox.com/mapbox-gl-js/)
@@ -19,7 +23,7 @@
 &nbsp;
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-c084fc?style=flat-square)](#-contributing)
 
-[**Features**](#-features) · [**Screenshots**](#-screenshots) · [**Quick start**](#-quick-start) · [**How it works**](#-how-it-works) · [**Roadmap**](#-roadmap)
+[**🚀 Live demo**](https://find-nearby.vercel.app) · [**Features**](#-features) · [**Screenshots**](#-screenshots) · [**Quick start**](#-quick-start) · [**How it works**](#-how-it-works) · [**Roadmap**](#-roadmap)
 
 <br />
 
@@ -134,6 +138,10 @@ Tap ♡ to keep a place in your **Saved** list (stored on your device). **Share*
 </div>
 
 ## 🚀 Quick start
+
+**Just want to try it?** Open **[find-nearby.vercel.app](https://find-nearby.vercel.app)** on your phone or laptop. Nothing to install.
+
+To run it yourself:
 
 > **You need:** Node 20.19+ and a free [Mapbox public token](https://account.mapbox.com/access-tokens/) (`pk.…`).
 
