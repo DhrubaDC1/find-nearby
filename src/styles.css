@@ -284,6 +284,8 @@ a { color: var(--accent); }
   background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(8px);
 }
+.close.fav { right: 58px; font-size: 18px; }
+.close.fav[aria-pressed='true'] { color: #f43f5e; }
 .stats {
   display: grid;
   grid-auto-flow: column;
@@ -304,7 +306,8 @@ a { color: var(--accent); }
 .facts dt { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-top: 12px; }
 .facts dd { margin: 2px 0 0; overflow-wrap: anywhere; }
 .actions { display: flex; gap: 10px; padding: 16px 20px 22px; }
-.actions .btn { flex: 1; }
+.actions .btn { flex: 1; padding-inline: 10px; white-space: nowrap; }
+.actions:has(+ .actions) { padding-bottom: 0; }
 
 /* Map markers */
 .pin {
@@ -362,6 +365,72 @@ a { color: var(--accent); }
   font-weight: 500;
   box-shadow: var(--shadow);
   max-width: calc(100% - 32px);
+}
+
+/* Game mode */
+.hud {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 8px 8px 18px;
+  max-width: calc(100% - 32px);
+  border-radius: 18px;
+}
+.hud span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hud b { color: var(--c); }
+.hud .btn { flex: none; padding: 8px 14px; }
+.game-hint {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 5;
+  margin: 0;
+  font-size: 13px;
+  color: #fff;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+}
+kbd {
+  display: inline-block;
+  min-width: 22px;
+  margin: 0 2px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: var(--glass-strong);
+  color: var(--text);
+  font: 600 12px/1.4 Inter, system-ui, sans-serif;
+  text-align: center;
+  text-shadow: none;
+}
+.joystick {
+  position: fixed;
+  left: 28px;
+  bottom: calc(28px + env(safe-area-inset-bottom));
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  display: none;
+  place-items: center;
+  touch-action: none;
+  z-index: 5;
+}
+.joystick div {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(120deg, var(--accent), var(--accent-2));
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 50%, transparent);
+  pointer-events: none;
+}
+@media (pointer: coarse) {
+  .joystick { display: grid; }
+  .game-hint { display: none; }
 }
 
 /* Phone: panels become bottom sheets */

@@ -14,7 +14,7 @@ function padding() {
     : { top: 80, bottom: 80, left: 440, right: 80 }
 }
 
-export default function MapView({ center, preset, rings, places, cat, selected, hoveredId, route, onSelect, onHover }) {
+export default function MapView({ center, preset, rings, places, cat, selected, hoveredId, route, onSelect, onHover, onMap }) {
   const el = useRef(null)
   const map = useRef(null)
   const pins = useRef(new Map())
@@ -81,6 +81,7 @@ export default function MapView({ center, preset, rings, places, cat, selected, 
         },
       })
       setReady(true)
+      onMap(m)
       spin()
     })
     return () => m.remove()

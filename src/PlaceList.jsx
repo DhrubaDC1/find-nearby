@@ -50,7 +50,7 @@ export default function PlaceList({ placeName, categories, cat, onCat, places, l
               <div><b /><span /></div>
             </li>
           ))}
-        {!loading && !places.length && <li className="empty">Nothing here — try another category.</li>}
+        {!loading && !places.length && <li className="empty">{cat.id === 'saved' ? 'Nothing saved yet — tap ♡ on any place.' : 'Nothing here — try another category.'}</li>}
         {!loading &&
           places.map((p, i) => (
             <motion.li key={p.id} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i, 12) * 0.035 }}>
