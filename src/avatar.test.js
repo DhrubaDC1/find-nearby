@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { Vector3 } from 'three'
-import { loadClip, modelMatrix } from './avatar.js'
+import { loadAvatar, loadClip, modelMatrix } from './avatar.js'
 
 // Where the model's forward (+z) and up (+y) end up in mercator (x east, y south, z up).
 const dir = (heading, v) => {
@@ -22,4 +22,14 @@ test('shipped walk clip loads and drives the avatar skeleton', async () => {
   const clip = await loadClip('data:application/json,' + encodeURIComponent(json))
   assert.equal(clip.name, 'Walk')
   assert.ok(clip.tracks.some(t => t.name === 'LeftUpLeg.quaternion'))
+})
+
+test('a failed avatar load is retried, not cached', async () => {
+  globalThis.ProgressEvent ??= class extends Event {} // browser-only; three's FileLoader reports progress with it
+  const bad = 'data:model/gltf-binary;base64,AAAA'
+  const first = loadAvatar(bad, [])
+  await assert.rejects(first)
+  const second = loadAvatar(bad, [])
+  assert.notEqual(second, first) // a fresh attempt, not the cached failure
+  await assert.rejects(second)
 })

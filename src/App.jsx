@@ -18,8 +18,12 @@ const CATEGORIES = [
   { id: 'lodging', label: 'Stays', emoji: '🛏️', color: '#3b82f6' },
   { id: 'saved', label: 'Saved', emoji: '❤️', color: '#ef4444' },
 ]
-// three.js + the avatar only download when someone hits play.
-const Game = lazy(() => import('./Game.jsx'))
+const loadGame = () => import('./Game.jsx')
+const Game = lazy(loadGame)
+// Warm game mode (three.js chunk + avatar + walk clip) in the background once the page is idle,
+// so "Walk there yourself" starts instantly. Safari has no requestIdleCallback, hence the timer.
+const whenIdle = cb => ('requestIdleCallback' in window ? requestIdleCallback(cb, { timeout: 4000 }) : setTimeout(cb, 2000))
+whenIdle(() => loadGame().then(m => m.preload()).catch(() => {})) // a failure retries on play
 const byId = id => CATEGORIES.find(c => c.id === id)
 const shared = readShare(location.search)
 
